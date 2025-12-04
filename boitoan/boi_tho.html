@@ -485,7 +485,7 @@
     
     // 1. Sửa cách khai báo endpoint (đã được sửa)
     // ⚠️ RỦI RO BẢO MẬT: Key API được công khai.
-    const GEMINI_API_KEY = "AIzaSyCcPhWLnLQ9NkuHKLZIgSuTHl1opwflUFY"; 
+    const GEMINI_API_KEY = "AIzaSyAJekYWEftYVRX4qTPxevQDzYP-GDC3GSc"; 
     const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;    
     // Thêm avatar cho Ông Thọ và người dùng
     const PHUC_AVATAR = 'tho_avatar.png'; // Avatar Ông Thọ
@@ -592,7 +592,8 @@ async function fetchGeminiResponse(userMessage) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            config: {
+            // ĐÃ SỬA: Thay 'config' bằng 'generationConfig' để khắc phục lỗi 400
+            generationConfig: { 
                 // ĐÃ ĐƯỢC THIẾT LẬP ĐÚNG VAI TRÒ
                 systemInstruction: "Bạn là Ông Thọ, một vị tiên phúc đức hiền từ, đại diện cho sức khỏe và trường thọ. Bạn giải đáp vận mệnh và ban lời khuyên về sức khỏe, bình an, và cách giải trừ bệnh tật. Hãy trả lời như một ông tiên, với giọng văn cổ kính, từ tốn, đầy trí tuệ và sự nhân hậu. Luôn đưa ra những lời khai thị chân thành và tích cực, không quá ngắn gọn.",
             },
