@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Viếng chùa Online - Tinh Lọc Tâm Hồn</title>
+    <link href="../logo.png" rel="icon" type="logo.png"/>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         /* CSS Variables */
@@ -25,7 +26,6 @@
             padding: 0;
             line-height: 1.6;
             min-height: 100vh;
-            /* Đảm bảo trạng thái ban đầu là hidden để tránh nhấp nháy */
             opacity: 0; 
             transition: opacity 0.5s;
         }
@@ -89,25 +89,38 @@
             padding: 10px 0; 
         }
         
-/* Card Liquid Glass */
+        /* Card Liquid Glass */
         .interaction-block {
             padding: 25px; 
             border-radius: 12px;
             background: var(--glass-bg); 
             border: 1px solid var(--card-border);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            /* Đã thay đổi transition: Thêm hiệu ứng bounce nhẹ nhàng */
             transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
             
             /* Animation start state for sub-elements */
             opacity: 0;
             transform: translateY(20px);
         }
+        
+        /* === FIX: CĂN CHỈNH KHỐI THẮP HƯƠNG === */
+        .huong-area-block {
+            display: flex; /* Kích hoạt Flexbox */
+            flex-direction: column; /* Xếp theo cột */
+            justify-content: space-between; /* Căn đều nội dung (Đẩy Hồi hướng xuống cuối) */
+            align-items: center; /* Căn giữa theo chiều ngang */
+            text-align: center; /* Đảm bảo text căn giữa */
+        }
+        
+        .huong-area-block > div:last-child {
+            margin-top: 20px; /* Giảm khoảng cách này xuống */
+        }
+        /* ===================================== */
 
         /* HIỆU ỨNG HOVER GLASS - NỔI VÀ SÁNG */
         .interaction-block:hover {
-            transform: translateY(-8px); /* Nâng cao hơn một chút */
-            box-shadow: 0 0 25px var(--color-accent), 0 15px 50px rgba(0, 0, 0, 0.7); /* Bóng sáng hơn, rõ hơn */
+            transform: translateY(-8px); 
+            box-shadow: 0 0 25px var(--color-accent), 0 15px 50px rgba(0, 0, 0, 0.7); 
         }
         
         .interaction-block h3 {
@@ -224,90 +237,53 @@
         /* ======================================= */
         /* HIỆU ỨNG XUẤT HIỆN TRANG (LOAD-IN EFFECT) */
         /* ======================================= */
-
-        /* Keyframes chung cho fade-in và rise */
         @keyframes fadeInRise {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Keyframes riêng cho ảnh chùa (zoom nhẹ) */
         @keyframes fadeInZoom {
-            from {
-                opacity: 0;
-                transform: scale(1.05);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1.0);
-            }
+            from { opacity: 0; transform: scale(1.05); }
+            to { opacity: 1; transform: scale(1.0); }
         }
 
         /* Kích hoạt animation khi body có class 'loaded' */
-        body.loaded {
-            opacity: 1;
-        }
-
-        body.loaded .chua-main-view {
-            animation: fadeInZoom 1.5s ease-out forwards; 
-        }
-
-        body.loaded .interactive-area {
-            animation: fadeInRise 1s cubic-bezier(0.23, 1, 0.32, 1) 0.5s forwards; /* Nổi lên mượt hơn */
-        }
-        
-        /* Hiệu ứng trễ cho từng block */
-        body.loaded .interaction-block.menu-kinh-block {
-            animation: fadeInRise 1s ease-out 1.2s forwards; 
-        }
-        
-        body.loaded .interaction-block.huong-area-block {
-            animation: fadeInRise 1s ease-out 1.4s forwards; 
-        }
-        
-        body.loaded footer {
-            animation: fadeInRise 1s ease-out 1.8s forwards; 
-        }
+        body.loaded { opacity: 1; }
+        body.loaded .chua-main-view { animation: fadeInZoom 1.5s ease-out forwards; }
+        body.loaded .interactive-area { animation: fadeInRise 1s cubic-bezier(0.23, 1, 0.32, 1) 0.5s forwards; }
+        body.loaded .interaction-block.menu-kinh-block { animation: fadeInRise 1s ease-out 1.2s forwards; }
+        body.loaded .interaction-block.huong-area-block { animation: fadeInRise 1s ease-out 1.4s forwards; }
+        body.loaded footer { animation: fadeInRise 1s ease-out 1.8s forwards; }
         
         /* TỐI ƯU HÓA MOBILE */
         @media (max-width: 850px) {
-            .chua-main-view {
-                height: 50vh; 
-            }
+            .chua-main-view { height: 50vh; }
             .interactive-area {
                 width: 90%; 
                 margin: -50px auto 30px auto; 
             }
-            .chua-main-view h1 .title-part-1 {
-                display: none; 
-            }
-            .chua-main-view h1 {
-                font-size: 2.5em; 
-            }
+            .chua-main-view h1 .title-part-1 { display: none; }
+            .chua-main-view h1 { font-size: 2.5em; }
             .interaction-grid {
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
+            /* Thay đổi thứ tự: Đưa Thắp Hương lên đầu để ưu tiên hành động chính */
             .huong-area-block { order: 1; }
             .menu-kinh-block { order: 2; }
             
-             /* Giảm độ trễ trên mobile để load nhanh hơn */
-             body.loaded .interactive-area {
-                animation: fadeInRise 1s cubic-bezier(0.23, 1, 0.32, 1) 0.3s forwards; 
+            /* Giảm độ trễ trên mobile để load nhanh hơn */
+            body.loaded .interactive-area { animation: fadeInRise 1s cubic-bezier(0.23, 1, 0.32, 1) 0.3s forwards; }
+            body.loaded .interaction-block.huong-area-block { animation: fadeInRise 1s ease-out 0.8s forwards; }
+            body.loaded .interaction-block.menu-kinh-block { animation: fadeInRise 1s ease-out 1s forwards; }
+            
+            /* Tắt flexbox override trên mobile nếu cần */
+            .huong-area-block {
+                 justify-content: flex-start;
             }
             
-            body.loaded .interaction-block.menu-kinh-block {
-                animation: fadeInRise 1s ease-out 0.8s forwards; 
-            }
-            
-            body.loaded .interaction-block.huong-area-block {
-                animation: fadeInRise 1s ease-out 1s forwards; 
+            .huong-area-block > div:last-child {
+                 margin-top: 10px; /* Giảm thêm trên mobile */
             }
         }
     </style>
@@ -315,6 +291,7 @@
 <body>
     
     <div class="chua-main-view">
+
         <div id="smoke-container"></div> 
     </div>
 
@@ -345,13 +322,16 @@
             <div class="interaction-block huong-area huong-area-block">
                 <h3>THẮP HƯƠNG LÒNG THÀNH</h3>
                 <div class="lu-huong"></div>
-                <button id="thap-huong-btn">Thắp Nén Tâm Hương</button>
-                <p id="huong-status" style="color: var(--color-accent); margin-top: 20px; font-style: italic;">
-                    (Chưa thắp hương. Xin thành tâm thắp hương.)
-                </p>
                 
-                <div style="margin-top: 30px;">
-                    <p style="color: lightgray; font-size: 0.9em;">
+                <div style="flex-grow: 0;"> 
+                    <button id="thap-huong-btn">Thắp Nén Tâm Hương</button>
+                    <p id="huong-status" style="color: var(--color-accent); margin-top: 20px; font-style: italic;">
+                        (Chưa thắp hương. Xin thành tâm thắp hương.)
+                    </p>
+                </div>
+                
+                <div style="flex-grow: 1; display: flex; align-items: flex-end;"> 
+                    <p style="color: lightgray; font-size: 0.9em; margin-top: 0;">
                         Xin Quý vị hãy tịnh tâm và chấp tay niệm "Nam Mô A Di Đà Phật" (108 lần) sau khi niệm xong xin Qúy vị tụng hồi hướng:<br>
                         <span style="color: var(--color-accent); font-weight: bold;">"Nguyện đem công đức này, Hướng về khắp tất cả, Đệ tử và chúng sanh, Đều trọn thành Phật đạo."</span>
                     </p>

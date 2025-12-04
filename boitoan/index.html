@@ -4,31 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gieo Quẻ Tam Đa - Vận Mệnh Trong Tay</title>
+    <link href="../logo.png" rel="icon" type="logo.png"/>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.2);
-            --glow-color: rgba(255, 223, 0, 0.6); /* Màu vàng hào quang */
+            --glow-color: rgba(255, 253, 237, 0.6); /* Màu vàng hào quang */
             --text-color: #fff;
         }
 
         body {
-            zoom: 80%;
+            /* Loại bỏ zoom: 80% để tương thích tốt hơn với mobile/tablet */
             margin: 0;
             padding: 0;
             font-family: 'Merriweather', serif;
             overflow-x: hidden;
             background-color: #0f0f1a;
             color: var(--text-color);
-            height: 125vh;
+            /* Bỏ height: 125vh để tránh lỗi scroll không cần thiết */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding-bottom: 50px; /* Thêm padding dưới cùng để nội dung không bị dính */
+            padding-top: 50px;
+            zoom: 80%;
         }
-
-
 
         /* --- HERO BACKGROUND (TIÊN CẢNH) --- */
         .hero-bg {
@@ -37,43 +40,44 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -2;
-            /* Ảnh nền tiên cảnh: Bạn có thể thay đổi URL này */
+            z-index: -3; /* Giảm z-index để nó là lớp nền tuyệt đối */
             background-image: url('tiencanh.jpg'); 
             background-size: cover;
             background-position: center;
-            filter: brightness(0.6); /* Làm tối nền để nổi bật nhân vật */
+            filter: brightness(0.6);
         }
 
         /* --- HIỆU ỨNG SƯƠNG KHÓI (FOG - CSS PURE) --- */
         .fog-container {
-            position: absolute;
+            position: fixed; /* Chuyển sang fixed để luôn che toàn màn hình */
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            z-index: -1;
+            z-index: -2; /* Nằm trên lớp nền, dưới nội dung chính */
             pointer-events: none;
         }
 
-        .fog-img {
+        .fog-img, .fog-img-2 {
             position: absolute;
             height: 100vh;
             width: 300vw;
+            background-size: contain;
+            background-repeat: repeat-x;
+        }
+        
+        .fog-img {
             z-index: 1;
             opacity: 0.6;
-            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png') repeat-x;
-            background-size: contain;
+            background-image: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png');
             animation: fog 60s linear infinite;
         }
 
         .fog-img-2 {
-            position: absolute;
-            height: 100vh;
-            width: 300vw;
             z-index: 2;
             opacity: 0.4;
-            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png') repeat-x;
-            background-size: contain;
+            background-image: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png');
             animation: fog 40s linear infinite;
             top: 30%;
         }
@@ -89,13 +93,14 @@
             margin-bottom: 40px;
             z-index: 10;
             animation: fadeInDown 1.5s ease-out;
+            max-width: 90%;
         }
 
         h1 {
             font-family: 'Cinzel Decorative', cursive;
             font-size: 3.5em;
-            color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 69, 0, 0.5);
+            color: #aab0c2;
+            text-shadow: 0 0 10px rgba(128, 156, 169, 0.5), 0 0 20px rgba(100, 114, 120, 0.5);
             margin: 0;
             letter-spacing: 2px;
         }
@@ -139,7 +144,7 @@
         .image-wrapper {
             position: relative;
             width: 100%;
-            height: 450px; /* Chiều cao ảnh */
+            height: 450px; /* Chiều cao ảnh Desktop */
             display: flex;
             justify-content: center;
             align-items: flex-end;
@@ -167,20 +172,17 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); /* Bóng đổ đen giúp tách nền */
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
             transition: all 0.5s ease;
-            
-            /* [QUAN TRỌNG] Đây là chỗ bạn thay ảnh. Hiện tại tôi dùng ảnh demo cắt từ link bạn gửi */
-            /* Bạn cần thay src trong HTML bằng ảnh PNG đã tách nền của bạn */
         }
 
         /* --- HỘP THÔNG TIN (LIQUID GLASS) --- */
         .info-box {
-            margin-top: -30px; /* Đè lên chân ảnh một chút */
+            margin-top: -30px;
             width: 90%;
             padding: 20px;
             background: var(--glass-bg);
-            backdrop-filter: blur(15px); /* Hiệu ứng mờ kính */
+            backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
             border-radius: 15px;
@@ -193,7 +195,7 @@
 
         .info-box h3 {
             font-family: 'Cinzel Decorative', cursive;
-            color: #ffeb3b;
+            color: #a6c1be;
             font-size: 1.8em;
             margin: 0 0 10px 0;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -210,42 +212,42 @@
             display: inline-block;
             margin-top: 15px;
             padding: 8px 20px;
-            background: linear-gradient(45deg, #FFD700, #DAA520);
+            background: linear-gradient(45deg, #aabbc1, #8899a3);
             color: #000;
             text-decoration: none;
             border-radius: 20px;
             font-weight: bold;
-            opacity: 0; /* Ẩn nút ban đầu */
+            opacity: 0; /* Ẩn nút ban đầu trên desktop */
             transform: translateY(10px);
             transition: all 0.4s ease;
         }
 
         /* --- TRẠNG THÁI HOVER (TƯƠNG TÁC) --- */
         .god-card:hover .image-wrapper {
-            transform: translateY(-15px) scale(1.05); /* Bay lên nhẹ */
+            transform: translateY(-15px) scale(1.05);
         }
 
         .god-card:hover .god-img {
-            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6)); /* Ảnh sáng lên */
+            filter: drop-shadow(0 0 15px rgba(148, 179, 178, 0.6));
         }
 
         .god-card:hover .aura {
-            opacity: 1; /* Hiện hào quang */
-            transform: translate(-50%, -50%) scale(1.2) rotate(180deg); /* Xoay nhẹ hào quang */
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
         }
 
         .god-card:hover .info-box {
-            background: rgba(255, 215, 0, 0.15); /* Kính sáng lên màu vàng */
-            border-color: rgba(255, 215, 0, 0.5);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            background: rgba(108, 124, 133, 0.15);
+            border-color: rgba(97, 120, 130, 0.5);
+            box-shadow: 0 0 20px rgba(111, 120, 134, 0.2);
         }
 
         .god-card:hover .btn-select {
-            opacity: 1; /* Hiện nút */
+            opacity: 1;
             transform: translateY(0);
         }
 
-        /* --- ANIMATIONS KEYFRAMES --- */
+        /* --- ANIMATIONS KEYFRAMES (Giữ nguyên) --- */
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-50px); }
             to { opacity: 1; transform: translateY(0); }
@@ -256,34 +258,99 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- MOBILE RESPONSIVE --- */
+        /* ======================================= */
+        /* --- MOBILE RESPONSIVE (Tối ưu hóa) --- */
+        /* ======================================= */
         @media (max-width: 900px) {
+            
+            body {
+                padding-top: 20px;
+                padding-bottom: 20px;
+                /* Chỉnh lại font-size cơ bản trên mobile */
+                font-size: 16px; 
+            }
+
+            header {
+                margin-bottom: 30px;
+            }
+
+            h1 { 
+                font-size: 2.2em; /* Giảm font chính */
+                letter-spacing: 1px;
+            }
+
+            p.subtitle {
+                font-size: 1em; /* Giảm font phụ */
+            }
+
             .gods-container {
-                flex-direction: column;
+                flex-direction: column; /* Chuyển thành 1 cột */
                 align-items: center;
-                gap: 60px; /* Tăng khoảng cách trên mobile */
+                gap: 50px; /* Tăng khoảng cách giữa các ông */
+                padding: 10px;
             }
             
+            .god-card {
+                width: 90%; /* Chiếm 90% chiều rộng màn hình */
+                max-width: 400px; /* Giới hạn chiều rộng thẻ */
+                /* Bỏ animation delay trên mobile, làm các thẻ xuất hiện cùng lúc để mượt hơn */
+                animation-delay: 0s !important; 
+            }
+
             .image-wrapper {
-                height: 300px;
+                height: 250px; /* Giảm chiều cao ảnh trên mobile */
+            }
+
+            .aura {
+                width: 250px;
+                height: 250px;
+                transform: translate(-50%, -50%) scale(1.0); /* Giữ nguyên scale 1.0 */
+                opacity: 0.8; /* Có thể để opacity luôn là 0.8 để tạo hiệu ứng nền cho ảnh */
             }
             
-            h1 { font-size: 2.5em; }
+            .info-box {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .info-box h3 {
+                font-size: 1.6em; /* Giảm font tiêu đề thẻ */
+                margin-bottom: 5px;
+            }
             
-            /* Trên mobile luôn hiện nút để dễ bấm */
+            .info-box p {
+                font-size: 0.9em;
+            }
+
+            /* Trên mobile luôn hiện nút để dễ bấm và bỏ hiệu ứng hover */
             .btn-select {
                 opacity: 1;
                 transform: translateY(0);
+                padding: 10px 25px; /* Tăng kích thước nút */
+            }
+            
+            /* Xóa hiệu ứng hover trên mobile để tránh lỗi/giật */
+            .god-card:hover .image-wrapper,
+            .god-card:hover .god-img,
+            .god-card:hover .aura,
+            .god-card:hover .info-box {
+                transform: none;
+                box-shadow: none;
+                filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+                background: var(--glass-bg);
+                border-color: var(--glass-border);
+            }
+            
+            .god-card:active .image-wrapper {
+                 transform: scale(0.98); /* Hiệu ứng nhấn */
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Hero Background -->
     <div class="hero-bg"></div>
 
-    <!-- Hiệu ứng Sương Khói -->
     <div class="fog-container">
         <div class="fog-img"></div>
         <div class="fog-img-2"></div>
@@ -296,11 +363,9 @@
 
     <div class="gods-container">
         
-        <!-- ÔNG PHÚC -->
         <div class="god-card" onclick="window.location.href='boi_phuc.html'">
             <div class="image-wrapper">
                 <div class="aura"></div>
-                <!-- Thay src bằng ảnh PNG tách nền Ông Phúc của bạn -->
                 <img src="phuc.png" alt="Ông Phúc" class="god-img" style="content: url('phuc.png');"> 
             </div>
             <div class="info-box">
@@ -310,11 +375,9 @@
             </div>
         </div>
 
-        <!-- ÔNG LỘC -->
         <div class="god-card" onclick="window.location.href='boi_loc.html'">
             <div class="image-wrapper">
                 <div class="aura"></div>
-                <!-- Thay src bằng ảnh PNG tách nền Ông Lộc của bạn -->
                 <img src="loc.png" alt="Ông Lộc" class="god-img" style="content: url('loc.png');">
             </div>
             <div class="info-box">
@@ -324,11 +387,9 @@
             </div>
         </div>
 
-        <!-- ÔNG THỌ -->
         <div class="god-card" onclick="window.location.href='boi_tho.html'">
             <div class="image-wrapper">
                 <div class="aura"></div>
-                <!-- Thay src bằng ảnh PNG tách nền Ông Thọ của bạn -->
                 <img src="tho.png" alt="Ông Thọ" class="god-img" style="content: url('tho.png');">
             </div>
             <div class="info-box">

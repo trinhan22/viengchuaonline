@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phát Tâm Cúng Dường</title>
+    <link href="../logo.png" rel="icon" type="logo.png"/>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS Variables (Updated) --- */
+        :root {
+            --color-dark-bg: #0d0c11; /* Nền siêu tối, hơi tím than */
+            --color-accent-dark: #B8860B; /* Vàng cổ (Antique Gold) */
+            --color-accent-light: #C5B358; /* Vàng kim sa */
+            --color-text-light: #e0e0e0;
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Merriweather', serif;
+        }
+
+        /* --- Body và Background --- */
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-dark-bg);
+            color: var(--color-text-light);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            min-height: 100vh;
+            
+            /* Dùng URL ảnh nền tạm thời */
+            background-image: url('../chua-co-kinh-background.webp'); 
+            background-size: cover;
+            background-attachment: fixed; 
+            background-position: center center;
+        }
+
+        /* --- Lớp phủ (Overlay) --- */
+        .overlay {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.88); /* Tăng độ đậm để làm nổi bật kính */
+            z-index: -1;
+        }
+
+        /* --- Glass Container (COMPACT & BEAUTIFUL) --- */
+        .container {
+            max-width: 400px; /* Giảm tối đa xuống 400px */
+            width: 90%;
+            
+            /* Hiệu ứng Glass Mềm Mại */
+            background: rgba(30, 29, 36, 0.25); 
+            backdrop-filter: blur(18px) saturate(120%);
+            -webkit-backdrop-filter: blur(18px) saturate(120%);
+            
+            /* Viền và Bóng (Tinh tế hơn) */
+            border: 1px solid rgba(184, 134, 11, 0.5); /* Viền Antique Gold nhẹ */
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 25px rgba(197, 179, 88, 0.5); /* Bóng Gold Dust */
+            
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 5;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        /* --- HEADER --- */
+        .header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--color-accent-dark);
+            position: relative;
+        }
+
+        .header h1 {
+            font-family: var(--font-serif);
+            color: var(--color-accent-light);
+            font-size: 2.2em;
+            margin: 0;
+            text-shadow: 0 0 5px var(--color-accent-dark); 
+        }
+
+        .header p {
+            color: rgba(245, 240, 224, 0.6);
+            margin-top: 5px;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+        
+        /* Hiệu ứng phân cách */
+        .header h1::after {
+            content: "✦";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--color-accent-light);
+            font-size: 1.2em;
+        }
+
+
+        /* --- QR CODE SECTION --- */
+        .qr-section {
+            background: rgba(0, 0, 0, 0.4); 
+            border-radius: 8px;
+            padding: 20px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .qr-section h2 {
+            font-size: 1.1em;
+            color: var(--color-accent-light);
+            margin-bottom: 15px;
+            font-weight: 700;
+            font-family: var(--font-sans);
+        }
+
+        .qr-wrapper {
+            width: 180px; /* Thu nhỏ QR code hơn nữa */
+            height: 180px; 
+            margin: 0 auto 15px;
+            border: 4px solid var(--color-accent-dark); 
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(184, 134, 11, 0.8);
+        }
+
+        .qr-wrapper img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+            background-color: #fff;
+        }
+
+        /* --- Account Info (Tinh giản) --- */
+        .account-info {
+            line-height: 1.5;
+            font-size: 0.9em;
+            text-align: left;
+            padding: 0 5px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+        }
+        
+        .info-row strong {
+            color: var(--color-accent-light);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        
+        .copy-btn {
+            background: none;
+            border: 1px solid var(--color-accent-dark);
+            color: var(--color-accent-light);
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.8em;
+            transition: all 0.3s;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+        
+        .copy-btn:hover {
+            color: var(--color-dark-bg);
+            background-color: var(--color-accent-light);
+            border-color: var(--color-accent-light);
+        }
+
+        /* --- CHÚC PHÚC --- */
+        .blessing {
+            font-size: 0.9em;
+            color: var(--color-text-light);
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed rgba(184, 134, 11, 0.7);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            font-style: italic;
+        }
+
+        /* --- FOOTER --- */
+        .footer {
+            margin-top: 15px;
+            font-size: 0.65em;
+            color: rgba(245, 240, 224, 0.3);
+        }
+
+        /* --- ANIMATION --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Responsive (Mobile) --- */
+        @media (max-width: 450px) {
+            body { align-items: flex-start; }
+            .container {
+                max-width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 15px;
+                margin: 0;
+            }
+            .header h1 { font-size: 1.6em; }
+            .qr-wrapper { width: 160px; height: 160px; }
+            .info-row { flex-direction: column; align-items: flex-start; padding: 5px 0; }
+            .copy-btn { margin-left: 0; margin-top: 3px; font-size: 0.8em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+    
+    <div class="container">
+        
+
+        <div class="qr-section">
+            <h2>Phát Tâm Cúng Dường</h2>
+            
+            <div class="qr-wrapper">
+                <img id="qrCodeImage" src="[URL_MA_QR_CODE_THANH_TOAN_CUA_BAN]" alt="Mã QR Code Thanh Toán">
+            </div>
+
+            <div class="account-info">
+                <div class="info-row">
+                    <strong>NGÂN HÀNG:</strong> 
+                    <span id="bankName">Tên Ngân Hàng Của Bạn</span>
+                </div>
+                <div class="info-row">
+                    <strong>SỐ TÀI KHOẢN:</strong> 
+                    <span id="accountNumber">0987 654 321</span>
+                    <button class="copy-btn" onclick="copyAccount('accountNumber')">Sao chép</button>
+                </div>
+                <div class="info-row">
+                    <strong>CHỦ TÀI KHOẢN:</strong> 
+                    <span id="accountHolder">Tên Chủ Tài Khoản Của Bạn</span>
+                </div>
+                <div class="info-row" style="color: var(--color-accent-light);">
+                    <strong>NỘI DUNG:</strong> 
+                    <span id="contentNote" style="font-weight: bold;">CUNG DUONG [TEN CUA BAN]</span>
+                    <button class="copy-btn" onclick="copyAccount('contentNote')">Sao chép</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="blessing">
+            <p>Nguyện cầu hồng ân Tam Bảo gia hộ, quý vị và gia quyến được thân tâm an lạc, vạn sự cát tường, phúc lộc thọ toàn!</p>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2025 Cổng Tâm Linh Vô Thường. Luôn hướng về Chánh Pháp.</p>
+        </div>
+    </div>
+
+    <script>
+        // *** BƯỚC 2: CẬP NHẬT THÔNG TIN CỦA BẠN DƯỚI ĐÂY ***
+        document.addEventListener('DOMContentLoaded', () => {
+            // Thay thế URL QR code
+            document.getElementById('qrCodeImage').src = 'bidv.png'; 
+            
+            // Thay thế Thông tin Ngân hàng
+            document.getElementById('bankName').textContent = 'BIDV';
+            document.getElementById('accountNumber').textContent = '8816291999';
+            document.getElementById('accountHolder').textContent = 'NGUYEN TRI NHAN';
+            document.getElementById('contentNote').textContent = 'PHAT TAM CUNG DUONG';
+        });
+
+        /**
+         * Hàm sao chép nội dung vào clipboard
+         */
+        function copyAccount(elementId) {
+            const element = document.getElementById(elementId);
+            const textToCopy = element.textContent;
+
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    alert('✅ Đã sao chép: ' + textToCopy);
+                })
+                .catch(err => {
+                    console.error('Lỗi khi sao chép: ', err);
+                    alert('Lỗi: Trình duyệt không hỗ trợ sao chép tự động.');
+                });
+        }
+    </script>
+</body>
+</html>
