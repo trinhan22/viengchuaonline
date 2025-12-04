@@ -479,161 +479,230 @@
 
     </div>
 
-    <script>
-        const chatMessages = document.getElementById('chatMessages');
-        const userInput = document.getElementById('userInput');
-        const API_KEY = 'YOUR_GEMINI_API_KEY'; // Thay thế bằng API Key của bạn
-        const API_ENDPOINT = 'YOUR_GEMINI_API_ENDPOINT'; // Thay thế bằng endpoint của Gemini API (ví dụ: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + API_KEY)
+<script>
+const chatMessages = document.getElementById('chatMessages');
+    const userInput = document.getElementById('userInput');
+    
+    // 1. CẤU HÌNH API
+    // !!! BẠN CẦN THAY THẾ AIzaSyAJekYWEftYVRX4qTPxevQDzYP-GDC3GSc BẰNG API KEY THỰC CỦA BẠN !!!
+    const GEMINI_API_KEY = "AIzaSyBLt_sCe613U4du807snGrUe9lwsBUai3g"; 
+    
+    // Endpoint sử dụng mô hình gemini-2.5-flash
+    const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`; 
+
+    // Đường dẫn ảnh (Đã chuyển sang URL công cộng để tránh lỗi thiếu file)
+    const PHUC_AVATAR = 'loc_avatar.png'; // Avatar Ông Thọ
+    const USER_AVATAR = 'nguoi_avatar.png'; // Avatar Người dùng
+
+    // Biến Lịch Sử Trò Chuyện (Quan trọng để duy trì ngữ cảnh)
+    const chatHistory = []; 
+
+    // System Instruction Cố Định
+    const SYSTEM_INSTRUCTION = "Bạn là Ông Lộc, một vị tiên phúc đức hiền từ, đại diện cho công danh và sự nghiệp. Bạn giải đáp vận mệnh và ban lời khuyên về tiền tài, danh vọng và cách giải trừ nghiệp chướng. Hãy trả lời như một ông tiên, với giọng văn cổ kính, từ tốn, đầy trí tuệ và sự nhân hậu. Luôn đưa ra những lời khai thị chân thành và tích cực, không quá ngắn gọn.";
+
+
+    window.addEventListener('load', function() {
+        document.body.classList.add('loaded');
+    });
+
+    /**
+     * Thêm tin nhắn vào giao diện
+     * @param {string} sender - 'user' hoặc 'phuc'
+     * @param {string} messageText 
+     * @param {string} avatar 
+     */
+    function addMessage(sender, messageText, avatar) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', sender);
         
-        // Thêm avatar cho Ông Phúc (bạn có thể tạo một ảnh nhỏ hơn)
-        // Tạo một ảnh avatar nhỏ của ông Phúc với nền trong suốt
-        const PHUC_AVATAR = 'loc_avatar.png'; 
-        const USER_AVATAR = 'user_avatar.png'; // Bạn có thể tạo một avatar người dùng mặc định
+        const avatarElement = document.createElement('img');
+        avatarElement.classList.add('message-avatar');
+        avatarElement.src = avatar;
+        avatarElement.alt = sender + ' Avatar';
 
-        // Gắn sự kiện tải trang để kích hoạt animations
-        window.addEventListener('load', function() {
-            document.body.classList.add('loaded');
+        const contentElement = document.createElement('div');
+        contentElement.classList.add('message-content');
+        
+        // Xử lý Markdown cơ bản (in đậm, xuống dòng)
+        let formattedText = messageText
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') 
+            .replace(/\n/g, '<br>'); 
+        
+        contentElement.innerHTML = formattedText; 
+
+        if (sender === 'user') {
+            messageElement.appendChild(contentElement);
+            messageElement.appendChild(avatarElement);
+        } else {
+            messageElement.appendChild(avatarElement);
+            messageElement.appendChild(contentElement);
+        }
+        
+        chatMessages.appendChild(messageElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    /**
+     * Gửi yêu cầu đến Gemini API và nhận phản hồi
+     * ĐÃ SỬA LỖI 400: Loại bỏ generationConfig.systemInstruction
+     */
+    async function fetchGeminiResponse() {
+        const response = await fetch(GEMINI_ENDPOINT, { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                // Gửi toàn bộ lịch sử chat làm payload
+                contents: chatHistory 
+            })
         });
 
-        // Hàm thêm tin nhắn vào chat box
-        function addMessage(sender, messageText, avatar) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', sender);
-            
-            const avatarElement = document.createElement('img');
-            avatarElement.classList.add('message-avatar');
-            avatarElement.src = avatar;
-            avatarElement.alt = sender + ' Avatar';
-
-            const contentElement = document.createElement('div');
-            contentElement.classList.add('message-content');
-            contentElement.textContent = messageText;
-
-            if (sender === 'user') {
-                messageElement.appendChild(contentElement);
-                messageElement.appendChild(avatarElement);
-            } else {
-                messageElement.appendChild(avatarElement);
-                messageElement.appendChild(contentElement);
-            }
-            
-            chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight; // Cuộn xuống cuối
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`API trả về lỗi ${response.status}: ${errorData.error.message}`);
         }
 
-        // Hàm xử lý gửi tin nhắn
-        async function sendMessage() {
-            const messageText = userInput.value.trim();
-            if (messageText === '') return;
-
-            addMessage('user', messageText, USER_AVATAR);
-            userInput.value = ''; // Xóa nội dung input
-
-            // Hiển thị tin nhắn "Ông Phúc đang suy ngẫm..."
-            const loadingMessage = document.createElement('div');
-            loadingMessage.classList.add('message', 'phuc');
-            loadingMessage.id = 'loadingMessage';
-
-            const loadingAvatar = document.createElement('img');
-            loadingAvatar.classList.add('message-avatar');
-            loadingAvatar.src = PHUC_AVATAR;
-            loadingAvatar.alt = 'Ông Lộc Avatar';
-
-            const loadingContent = document.createElement('div');
-            loadingContent.classList.add('message-content');
-            loadingContent.textContent = 'Ông Lộc đang suy ngẫm...';
+        const data = await response.json();
+        
+        if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts.length > 0) {
+            const botResponseText = data.candidates[0].content.parts[0].text;
             
-            loadingMessage.appendChild(loadingAvatar);
-            loadingMessage.appendChild(loadingContent);
-            chatMessages.appendChild(loadingMessage);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            try {
-                const geminiResponse = await fetchGeminiResponse(messageText);
-                chatMessages.removeChild(loadingMessage); // Xóa tin nhắn chờ
-                addMessage('phuc', geminiResponse, PHUC_AVATAR);
-            } catch (error) {
-                console.error('Lỗi khi lấy phản hồi từ Gemini:', error);
-                chatMessages.removeChild(loadingMessage); // Xóa tin nhắn chờ
-                addMessage('phuc', 'Ông Lộc đang bế quan, xin quay lại sau.', PHUC_AVATAR);
-            }
-        }
-
-        // Hàm gửi yêu cầu tới Gemini API
-        async function fetchGeminiResponse(userMessage) {
-            // Đây là nơi bạn cấu hình API của Gemini
-            // Đảm bảo API_KEY và API_ENDPOINT đã được thay thế
-            if (API_KEY === 'YOUR_GEMINI_API_KEY' || API_ENDPOINT === 'YOUR_GEMINI_API_ENDPOINT') {
-                throw new Error('Vui lòng cấu hình API_KEY và API_ENDPOINT của Gemini!');
-            }
-
-            const response = await fetch(API_ENDPOINT, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [
-                            { text: "Bạn là một ông tiên phúc đức hiền từ, người giải đáp vận mệnh và ban lời khuyên về bình an, gia đạo, con cái và sự hòa thuận. Hãy trả lời như một ông tiên, với giọng văn cổ kính, từ tốn, đầy trí tuệ. Đừng quá ngắn gọn, hãy đưa ra những lời khai thị chân thành. Tin nhắn của người dùng: " + userMessage }
-                        ]
-                    }]
-                })
+            // CẬP NHẬT LỊCH SỬ VỚI PHẢN HỒI CỦA MODEL
+            chatHistory.push({
+                role: "model",
+                parts: [{ text: botResponseText }]
             });
-
-            if (!response.ok) {
-                throw new Error(`Lỗi HTTP: ${response.status}`);
+            
+            return botResponseText;
+        } else {
+            if (data.candidates && data.candidates[0].finishReason === 'SAFETY') {
+                 return "Lời thỉnh cầu này bị Thiên Cơ che lấp, Ông Lộc chưa thể giải đáp. Xin đạo hữu thay đổi lời thỉnh cầu.";
             }
+            return "Ông Lộc chưa thể nhìn thấu thiên cơ lúc này. Xin đạo hữu thành tâm thử lại.";
+        }
+    }
 
-            const data = await response.json();
-            // Điều chỉnh để lấy đúng phần văn bản từ phản hồi của Gemini
-            return data.candidates[0].content.parts[0].text;
+
+    /**
+     * Xử lý quá trình gửi tin nhắn từ người dùng
+     * ĐÃ SỬA LỖI LỊCH SỬ CHAT: Thêm System Instruction vào tin nhắn đầu tiên của User
+     */
+    async function sendMessage() {
+        const messageText = userInput.value.trim();
+        if (messageText === '') return;
+
+        addMessage('user', messageText, USER_AVATAR);
+        userInput.value = ''; 
+        
+        let userParts = [{ text: messageText }];
+    
+        // Logic Sửa Lỗi Lịch Sử/System Instruction:
+        // Nếu là tin nhắn đầu tiên (chatHistory rỗng), thêm System Instruction vào làm phần đầu tiên
+        if (chatHistory.length === 0) {
+            userParts.unshift({ text: SYSTEM_INSTRUCTION });
         }
 
-        // Xử lý phím Enter
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-
-        // Hàm nhận diện giọng nói (Tùy chọn)
-        function startSpeechRecognition() {
-            if (!('webkitSpeechRecognition' in window)) {
-                alert('Trình duyệt của bạn không hỗ trợ nhận diện giọng nói.');
-                return;
-            }
-
-            const recognition = new webkitSpeechRecognition();
-            recognition.lang = 'vi-VN'; // Ngôn ngữ tiếng Việt
-            recognition.interimResults = false;
-            recognition.maxAlternatives = 1;
-
-            recognition.start();
-            micButton.style.backgroundColor = '#FF6347'; // Đổi màu nút khi đang nghe
-
-            recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                userInput.value = transcript;
-                micButton.style.backgroundColor = ''; // Trở lại màu mặc định
-                sendMessage(); // Tự động gửi tin nhắn sau khi nhận diện
-            };
-
-            recognition.onerror = function(event) {
-                console.error('Lỗi nhận diện giọng nói:', event.error);
-                micButton.style.backgroundColor = '';
-                alert('Lỗi nhận diện giọng nói. Vui lòng thử lại.');
-            };
-
-            recognition.onend = function() {
-                micButton.style.backgroundColor = '';
-            };
-        }
-
-        // Khởi tạo các animation và hiệu ứng khi tải trang
-        document.addEventListener('DOMContentLoaded', () => {
-            // Placeholder for any initial animations or content setup
+        // GHI LẠI TIN NHẮN CỦA NGƯỜI DÙNG VÀO LỊCH SỬ
+        chatHistory.push({
+            role: "user",
+            parts: userParts
         });
-    </script>
+
+        // Hiển thị trạng thái Loading
+        const loadingMessage = document.createElement('div');
+        loadingMessage.classList.add('message', 'phuc', 'loading');
+        loadingMessage.id = 'loadingMessage';
+
+        const loadingAvatar = document.createElement('img');
+        loadingAvatar.classList.add('message-avatar');
+        loadingAvatar.src = PHUC_AVATAR;
+        loadingAvatar.alt = 'Ông Thọ Avatar';
+
+        const loadingContent = document.createElement('div');
+        loadingContent.classList.add('message-content');
+        loadingContent.innerHTML = 'Ông Lộc đang suy ngẫm <span id="loadingDots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></span>';
+        
+        loadingMessage.appendChild(loadingAvatar);
+        loadingMessage.appendChild(loadingContent);
+        chatMessages.appendChild(loadingMessage);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Vô hiệu hóa input và nút gửi
+        document.getElementById('sendButton').disabled = true;
+        userInput.disabled = true;
+        
+        // Thêm hiệu ứng rung nhẹ cho Ông Thọ
+        document.querySelector('.phuc-image-wrapper').style.transform = 'translateY(-5px) scale(1.02)';
+
+        try {
+            const geminiResponse = await fetchGeminiResponse(); 
+            chatMessages.removeChild(loadingMessage);
+            addMessage('phuc', geminiResponse, PHUC_AVATAR);
+        } catch (error) {
+            console.error('Lỗi khi lấy phản hồi từ Gemini:', error);
+            chatMessages.removeChild(loadingMessage);
+            addMessage('phuc', 'Ông Thọ đang bế quan, xin quay lại sau. Lỗi: ' + error.message, PHUC_AVATAR);
+        } finally {
+            // Khôi phục trạng thái
+            document.getElementById('sendButton').disabled = false;
+            userInput.disabled = false;
+            userInput.focus();
+            
+            document.querySelector('.phuc-image-wrapper').style.transform = 'translateY(0) scale(1.0)';
+        }
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+    
+    // Gán sự kiện
+    userInput.addEventListener('keypress', handleKeyPress);
+    document.getElementById('sendButton').addEventListener('click', sendMessage);
+
+    // Hàm nhận diện giọng nói (Speech Recognition)
+    function startSpeechRecognition() {
+        const micButton = document.getElementById('micButton');
+        if (!('webkitSpeechRecognition' in window)) {
+            alert('Trình duyệt của bạn không hỗ trợ nhận diện giọng nói.');
+            return;
+        }
+
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = 'vi-VN'; 
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.start();
+        micButton.style.backgroundColor = '#FF6347'; // Đổi màu khi đang nghe
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
+            micButton.style.backgroundColor = ''; 
+            sendMessage(); // Gửi tin nhắn ngay sau khi nhận diện
+        };
+
+        recognition.onerror = function(event) {
+            console.error('Lỗi nhận diện giọng nói:', event.error);
+            micButton.style.backgroundColor = '';
+            alert('Lỗi nhận diện giọng nói. Vui lòng thử lại.');
+        };
+
+        recognition.onend = function() {
+            micButton.style.backgroundColor = '';
+        };
+    }
+
+    document.getElementById('micButton').addEventListener('click', startSpeechRecognition);
+
+    // Chức năng khởi tạo nếu cần
+    document.addEventListener('DOMContentLoaded', () => {
+        // Có thể thêm code khởi tạo ở đây nếu cần thiết
+    });
+</script>
 </body>
 </html>

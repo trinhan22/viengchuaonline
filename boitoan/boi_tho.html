@@ -267,6 +267,29 @@
             color: #e0e0e0;
             border-bottom-left-radius: 2px;
         }
+        
+        /* Message trạng thái chờ (thinking indicator) */
+        .message.phuc.loading #loadingDots {
+            display: flex;
+            align-items: center;
+        }
+
+        #loadingDots .dot {
+            width: 8px;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 50%;
+            margin: 0 4px;
+            animation: dotFlashing 1s infinite alternate;
+        }
+
+        #loadingDots .dot:nth-child(2) { animation-delay: 0.3s; }
+        #loadingDots .dot:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes dotFlashing {
+            0% { opacity: 0.2; transform: translateY(0); }
+            100% { opacity: 1; transform: translateY(-4px); }
+        }
 
         /* Lời chào đầu tiên từ Ông Phúc */
         .initial-message {
@@ -347,6 +370,13 @@
         .chat-input-area button:hover {
             transform: scale(1.05);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+        }
+        
+        .chat-input-area button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         /* --- ANIMATIONS KEYFRAMES --- */
@@ -449,7 +479,7 @@
         <div class="phuc-display">
             <div class="phuc-image-wrapper">
                 <div class="phuc-aura"></div>
-                <img src="tho.png" alt="Ông Phúc" class="phuc-img"> 
+                <img src="tho.png" alt="Ông Thọ" class="phuc-img"> 
             </div>
         </div>
 
@@ -460,7 +490,7 @@
             
             <div class="chat-messages" id="chatMessages">
                 <div class="initial-message">
-                    <img src="tho_avatar.png" alt="Ông Phúc Avatar" class="message-avatar"> <div>
+                    <img src="tho_avatar.png" alt="Ông Thọ Avatar" class="message-avatar"> <div>
                         Nam Mô A Di Đà Phật! Con xin chào quý đạo hữu. Hãy thành tâm bày tỏ điều lo lắng, Ông Thọ sẽ ban lời khai thị!
                     </div>
                 </div>
@@ -468,7 +498,7 @@
             
             <div class="chat-input-area">
                 <input type="text" id="userInput" placeholder="Gõ câu thỉnh cầu của bạn và thành tâm niệm..." onkeypress="handleKeyPress(event)">
-                <button id="sendButton" onclick="sendMessage()">
+                <button id="sendButton">
                     <i class="fas fa-paper-plane"></i>
                 </button>
                 <button id="micButton" onclick="startSpeechRecognition()">
@@ -480,23 +510,37 @@
     </div>
 
 <script>
-    const chatMessages = document.getElementById('chatMessages');
+const chatMessages = document.getElementById('chatMessages');
     const userInput = document.getElementById('userInput');
     
-    // 1. Sửa cách khai báo endpoint (đã được sửa)
-    // ⚠️ RỦI RO BẢO MẬT: Key API được công khai.
+    // 1. CẤU HÌNH API
+    // !!! BẠN CẦN THAY THẾ AIzaSyAJekYWEftYVRX4qTPxevQDzYP-GDC3GSc BẰNG API KEY THỰC CỦA BẠN !!!
     const GEMINI_API_KEY = "AIzaSyAJekYWEftYVRX4qTPxevQDzYP-GDC3GSc"; 
-    const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;    
-    // Thêm avatar cho Ông Thọ và người dùng
-    const PHUC_AVATAR = 'tho_avatar.png'; // Avatar Ông Thọ
-    const USER_AVATAR = 'user_avatar.png'; // Avatar người dùng mặc định
+    
+    // Endpoint sử dụng mô hình gemini-2.5-flash
+    const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`; 
 
-    // Gắn sự kiện tải trang để kích hoạt animations
+    // Đường dẫn ảnh (Đã chuyển sang URL công cộng để tránh lỗi thiếu file)
+    const PHUC_AVATAR = 'tho_avatar.png'; // Avatar Ông Thọ
+    const USER_AVATAR = 'nguoi_avatar.png'; // Avatar Người dùng
+
+    // Biến Lịch Sử Trò Chuyện (Quan trọng để duy trì ngữ cảnh)
+    const chatHistory = []; 
+
+    // System Instruction Cố Định
+    const SYSTEM_INSTRUCTION = "Bạn là Ông Thọ, một vị tiên phúc đức hiền từ, đại diện cho sức khỏe và trường thọ. Bạn giải đáp vận mệnh và ban lời khuyên về sức khỏe, bình an, và cách giải trừ bệnh tật. Hãy trả lời như một ông tiên, với giọng văn cổ kính, từ tốn, đầy trí tuệ và sự nhân hậu. Luôn đưa ra những lời khai thị chân thành và tích cực, không quá ngắn gọn.";
+
+
     window.addEventListener('load', function() {
         document.body.classList.add('loaded');
     });
 
-    // Hàm thêm tin nhắn vào chat box
+    /**
+     * Thêm tin nhắn vào giao diện
+     * @param {string} sender - 'user' hoặc 'phuc'
+     * @param {string} messageText 
+     * @param {string} avatar 
+     */
     function addMessage(sender, messageText, avatar) {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message', sender);
@@ -509,10 +553,10 @@
         const contentElement = document.createElement('div');
         contentElement.classList.add('message-content');
         
-        // Tích hợp xử lý Markdown đơn giản (cho phép **in đậm** và xuống dòng)
+        // Xử lý Markdown cơ bản (in đậm, xuống dòng)
         let formattedText = messageText
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // In đậm
-            .replace(/\n/g, '<br>'); // Xuống dòng
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') 
+            .replace(/\n/g, '<br>'); 
         
         contentElement.innerHTML = formattedText; 
 
@@ -525,20 +569,79 @@
         }
         
         chatMessages.appendChild(messageElement);
-        chatMessages.scrollTop = chatMessages.scrollHeight; // Cuộn xuống cuối
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    // Hàm xử lý gửi tin nhắn
+    /**
+     * Gửi yêu cầu đến Gemini API và nhận phản hồi
+     * ĐÃ SỬA LỖI 400: Loại bỏ generationConfig.systemInstruction
+     */
+    async function fetchGeminiResponse() {
+        const response = await fetch(GEMINI_ENDPOINT, { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                // Gửi toàn bộ lịch sử chat làm payload
+                contents: chatHistory 
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`API trả về lỗi ${response.status}: ${errorData.error.message}`);
+        }
+
+        const data = await response.json();
+        
+        if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts.length > 0) {
+            const botResponseText = data.candidates[0].content.parts[0].text;
+            
+            // CẬP NHẬT LỊCH SỬ VỚI PHẢN HỒI CỦA MODEL
+            chatHistory.push({
+                role: "model",
+                parts: [{ text: botResponseText }]
+            });
+            
+            return botResponseText;
+        } else {
+            if (data.candidates && data.candidates[0].finishReason === 'SAFETY') {
+                 return "Lời thỉnh cầu này bị Thiên Cơ che lấp, Ông Thọ chưa thể giải đáp. Xin đạo hữu thay đổi lời thỉnh cầu.";
+            }
+            return "Ông Thọ chưa thể nhìn thấu thiên cơ lúc này. Xin đạo hữu thành tâm thử lại.";
+        }
+    }
+
+
+    /**
+     * Xử lý quá trình gửi tin nhắn từ người dùng
+     * ĐÃ SỬA LỖI LỊCH SỬ CHAT: Thêm System Instruction vào tin nhắn đầu tiên của User
+     */
     async function sendMessage() {
         const messageText = userInput.value.trim();
         if (messageText === '') return;
 
         addMessage('user', messageText, USER_AVATAR);
-        userInput.value = ''; // Xóa nội dung input
+        userInput.value = ''; 
+        
+        let userParts = [{ text: messageText }];
+    
+        // Logic Sửa Lỗi Lịch Sử/System Instruction:
+        // Nếu là tin nhắn đầu tiên (chatHistory rỗng), thêm System Instruction vào làm phần đầu tiên
+        if (chatHistory.length === 0) {
+            userParts.unshift({ text: SYSTEM_INSTRUCTION });
+        }
 
-        // 1. Hiển thị tin nhắn chờ
+        // GHI LẠI TIN NHẮN CỦA NGƯỜI DÙNG VÀO LỊCH SỬ
+        chatHistory.push({
+            role: "user",
+            parts: userParts
+        });
+
+        // Hiển thị trạng thái Loading
         const loadingMessage = document.createElement('div');
-        loadingMessage.classList.add('message', 'phuc');
+        loadingMessage.classList.add('message', 'phuc', 'loading');
         loadingMessage.id = 'loadingMessage';
 
         const loadingAvatar = document.createElement('img');
@@ -548,99 +651,53 @@
 
         const loadingContent = document.createElement('div');
         loadingContent.classList.add('message-content');
-        loadingContent.textContent = 'Ông Thọ đang suy ngẫm...';
+        loadingContent.innerHTML = 'Ông Thọ đang suy ngẫm <span id="loadingDots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></span>';
         
         loadingMessage.appendChild(loadingAvatar);
         loadingMessage.appendChild(loadingContent);
         chatMessages.appendChild(loadingMessage);
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
-        // 2. Tắt nút gửi và input khi đang chờ phản hồi
+        // Vô hiệu hóa input và nút gửi
         document.getElementById('sendButton').disabled = true;
         userInput.disabled = true;
         
-        // Căn chỉnh lại vị trí Ông Thọ (chuyển animation sang trạng thái "nghiêm nghị")
+        // Thêm hiệu ứng rung nhẹ cho Ông Thọ
         document.querySelector('.phuc-image-wrapper').style.transform = 'translateY(-5px) scale(1.02)';
-        document.querySelector('.phuc-aura').style.opacity = '1';
 
         try {
-            const geminiResponse = await fetchGeminiResponse(messageText);
-            chatMessages.removeChild(loadingMessage); // Xóa tin nhắn chờ
+            const geminiResponse = await fetchGeminiResponse(); 
+            chatMessages.removeChild(loadingMessage);
             addMessage('phuc', geminiResponse, PHUC_AVATAR);
         } catch (error) {
             console.error('Lỗi khi lấy phản hồi từ Gemini:', error);
-            chatMessages.removeChild(loadingMessage); // Xóa tin nhắn chờ
+            chatMessages.removeChild(loadingMessage);
             addMessage('phuc', 'Ông Thọ đang bế quan, xin quay lại sau. Lỗi: ' + error.message, PHUC_AVATAR);
         } finally {
-            // 3. Bật lại nút gửi và input
+            // Khôi phục trạng thái
             document.getElementById('sendButton').disabled = false;
             userInput.disabled = false;
             userInput.focus();
             
-            // Đặt lại vị trí Ông Thọ
             document.querySelector('.phuc-image-wrapper').style.transform = 'translateY(0) scale(1.0)';
-            document.querySelector('.phuc-aura').style.opacity = '1'; // Giữ nguyên aura
         }
     }
 
-// Hàm gửi yêu cầu tới Gemini API
-async function fetchGeminiResponse(userMessage) {
-    // SỬ DỤNG GEMINI_ENDPOINT đã được định nghĩa
-    const response = await fetch(GEMINI_ENDPOINT, { 
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            // ĐÃ SỬA: Thay 'config' bằng 'generationConfig' để khắc phục lỗi 400
-            generationConfig: { 
-                // ĐÃ ĐƯỢC THIẾT LẬP ĐÚNG VAI TRÒ
-                systemInstruction: "Bạn là Ông Thọ, một vị tiên phúc đức hiền từ, đại diện cho sức khỏe và trường thọ. Bạn giải đáp vận mệnh và ban lời khuyên về sức khỏe, bình an, và cách giải trừ bệnh tật. Hãy trả lời như một ông tiên, với giọng văn cổ kính, từ tốn, đầy trí tuệ và sự nhân hậu. Luôn đưa ra những lời khai thị chân thành và tích cực, không quá ngắn gọn.",
-            },
-            contents: [{
-                parts: [
-                    { text: userMessage } 
-                ]
-            }]
-        })
-    });
-
-    if (!response.ok) {
-        // Xử lý lỗi từ API
-        const errorData = await response.json();
-        throw new Error(`API trả về lỗi ${response.status}: ${errorData.error.message}`);
-    }
-
-    const data = await response.json();
-    if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts.length > 0) {
-        return data.candidates[0].content.parts[0].text;
-    } else {
-        // Xử lý trường hợp bị lọc nội dung (ví dụ: bị chặn do chính sách an toàn)
-        if (data.candidates && data.candidates[0].finishReason === 'SAFETY') {
-             return "Lời thỉnh cầu này bị Thiên Cơ che lấp, Ông Thọ chưa thể giải đáp. Xin đạo hữu thay đổi lời thỉnh cầu.";
-        }
-        return "Ông Thọ chưa thể nhìn thấu thiên cơ lúc này. Xin đạo hữu thành tâm thử lại.";
-    }
-}
-
-    // Xử lý phím Enter
     function handleKeyPress(event) {
         if (event.key === 'Enter') {
             sendMessage();
         }
     }
     
-    // Gắn hàm handleKeyPress vào input
+    // Gán sự kiện
     userInput.addEventListener('keypress', handleKeyPress);
-
-    // Gắn hàm sendMessage vào nút gửi (nếu chưa có trong HTML)
     document.getElementById('sendButton').addEventListener('click', sendMessage);
 
-    // Hàm nhận diện giọng nói (Giữ nguyên)
+    // Hàm nhận diện giọng nói (Speech Recognition)
     function startSpeechRecognition() {
         const micButton = document.getElementById('micButton');
         if (!('webkitSpeechRecognition' in window)) {
-            alert('Trình duyệt của bạn không hỗ trợ nhận diện giọng nói (Chỉ hỗ trợ trên Chrome và một số trình duyệt khác).');
+            alert('Trình duyệt của bạn không hỗ trợ nhận diện giọng nói.');
             return;
         }
 
@@ -650,13 +707,13 @@ async function fetchGeminiResponse(userMessage) {
         recognition.maxAlternatives = 1;
 
         recognition.start();
-        micButton.style.backgroundColor = '#FF6347'; 
+        micButton.style.backgroundColor = '#FF6347'; // Đổi màu khi đang nghe
 
         recognition.onresult = function(event) {
             const transcript = event.results[0][0].transcript;
             userInput.value = transcript;
             micButton.style.backgroundColor = ''; 
-            sendMessage(); 
+            sendMessage(); // Gửi tin nhắn ngay sau khi nhận diện
         };
 
         recognition.onerror = function(event) {
@@ -670,7 +727,10 @@ async function fetchGeminiResponse(userMessage) {
         };
     }
 
+    document.getElementById('micButton').addEventListener('click', startSpeechRecognition);
+
+    // Chức năng khởi tạo nếu cần
     document.addEventListener('DOMContentLoaded', () => {
-        // Có thể thêm code khởi tạo ở đây nếu cần
+        // Có thể thêm code khởi tạo ở đây nếu cần thiết
     });
 </script>
