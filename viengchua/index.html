@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viếng chùa Online - Tinh Lọc Tâm Hồn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables */
+        :root {
+            --color-dark-bg: #100f13; 
+            --color-accent: #e5c100; 
+            --color-text-light: #f5f0e0;
+            --font-serif: 'Merriweather', serif;
+            --font-sans: 'Open Sans', sans-serif;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(229, 193, 0, 0.3);
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-dark-bg);
+            color: var(--color-text-light);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+            /* Đảm bảo trạng thái ban đầu là hidden để tránh nhấp nháy */
+            opacity: 0; 
+            transition: opacity 0.5s;
+        }
+        
+        /* PHẦN CHÙA (TOP) - HERO */
+        .chua-main-view {
+            width: 100%;
+            height: 85vh; 
+            background-image: url('Scene0_.jpg'); /* Thay thế bằng đường dẫn ảnh chùa của bạn */
+            background-size: cover;
+            background-position: center bottom;
+            position: relative; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+            border-bottom: 5px solid var(--color-accent);
+            overflow: hidden; 
+            
+            /* Animation start state */
+            opacity: 0;
+            transform: scale(1.05); /* Zoom nhẹ */
+        }
+
+        /* Tiêu đề chính */
+        .chua-main-view h1 {
+            position: absolute;
+            bottom: 30px; 
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--color-accent); 
+            font-family: var(--font-serif);
+            font-size: 4em; 
+            text-shadow: 0 0 15px rgba(229, 193, 0, 1);
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        /* KHU VỰC TƯƠNG TÁC (BOTTOM) */
+        .interactive-area {
+            position: relative;
+            z-index: 10;
+            width: 70%; 
+            max-width: 1000px; 
+            margin: -80px auto 40px auto; 
+            padding: 30px; 
+            
+            background: rgba(16, 15, 19, 0.75); 
+            backdrop-filter: blur(10px); 
+            border-radius: 15px; 
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(229, 193, 0, 0.2);
+            
+            /* Animation start state */
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        /* Bố cục Grid 2 CỘT */
+        .interaction-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; 
+            gap: 30px; 
+            padding: 10px 0; 
+        }
+        
+/* Card Liquid Glass */
+        .interaction-block {
+            padding: 25px; 
+            border-radius: 12px;
+            background: var(--glass-bg); 
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            /* Đã thay đổi transition: Thêm hiệu ứng bounce nhẹ nhàng */
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+            
+            /* Animation start state for sub-elements */
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* HIỆU ỨNG HOVER GLASS - NỔI VÀ SÁNG */
+        .interaction-block:hover {
+            transform: translateY(-8px); /* Nâng cao hơn một chút */
+            box-shadow: 0 0 25px var(--color-accent), 0 15px 50px rgba(0, 0, 0, 0.7); /* Bóng sáng hơn, rõ hơn */
+        }
+        
+        .interaction-block h3 {
+            color: var(--color-accent);
+            font-family: var(--font-serif);
+            margin-top: 0;
+            margin-bottom: 20px; 
+            font-size: 1.5em; 
+            text-align: center;
+            text-shadow: 0 0 5px rgba(229, 193, 0, 0.7);
+        }
+        
+        /* 1. Menu Kinh Tụng */
+        .menu-kinh-list {
+            list-style: none;
+            padding: 0;
+            max-height: 350px; 
+            overflow-y: auto;
+            padding-right: 10px; 
+        }
+        
+        /* Link trong Menu */
+        .menu-kinh-list li a {
+            display: block;
+            padding: 8px; 
+            margin-bottom: 6px; 
+            background: linear-gradient(90deg, rgba(229, 193, 0, 0.1) 0%, rgba(229, 193, 0, 0.05) 100%);
+            color: var(--color-text-light);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s;
+            border-left: 3px solid rgba(229, 193, 0, 0.5);
+            font-weight: 600;
+        }
+        
+        /* Hiệu ứng Hover cho Link */
+        .menu-kinh-list li a:hover {
+            background: var(--color-accent);
+            color: var(--color-dark-bg);
+            box-shadow: 0 0 8px var(--color-accent);
+            transform: translateX(5px);
+            border-left: 3px solid var(--color-dark-bg);
+        }
+
+        /* 2. Thắp Hương */
+        .lu-huong {
+            width: 100px; 
+            height: 100px;
+            background-image: url('lu_huong_mau_dong.png'); 
+            background-size: contain;
+            background-repeat: no-repeat;
+            margin: 15px auto 20px auto; 
+            position: initial; 
+            filter: drop-shadow(0 0 8px rgba(229, 193, 0, 0.8)); 
+        }
+        
+        #thap-huong-btn {
+            background: linear-gradient(135deg, var(--color-accent), #f0d05c); 
+            color: var(--color-dark-bg);
+            padding: 10px 25px; 
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em; 
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(229, 193, 0, 0.5);
+        }
+
+        /* Khói Hương Vĩnh Cửu (Đã được FIX) */
+        #smoke-container {
+            position: absolute;
+            z-index: 9; 
+            left: 50%;
+            transform: translateX(-50%);
+            top: 60%; 
+            width: 150px;
+            height: 250px; 
+            pointer-events: none; 
+            opacity: 0; 
+            transition: opacity 1s;
+        }
+        
+        .smoke {
+            position: absolute;
+            width: 25px; 
+            height: 25px;
+            background: rgba(255, 255, 255, 0.2); 
+            border-radius: 50%;
+            animation: smoke-up 5s infinite linear; 
+            filter: blur(3px); 
+        }
+
+        @keyframes smoke-up {
+            0% { transform: translateY(0) scale(1.0); opacity: 0.05; } 
+            30% { transform: translateY(-70px) scale(1.5); opacity: 0.25; }
+            100% { transform: translateY(-250px) scale(4.0); opacity: 0; } 
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(to top, rgba(16, 15, 19, 1), rgba(16, 15, 19, 0.8));
+            color: rgba(245, 240, 224, 0.6);
+            margin-top: 20px;
+            border-top: 1px solid rgba(229, 193, 0, 0.1);
+            
+            /* Animation start state */
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* ======================================= */
+        /* HIỆU ỨNG XUẤT HIỆN TRANG (LOAD-IN EFFECT) */
+        /* ======================================= */
+
+        /* Keyframes chung cho fade-in và rise */
+        @keyframes fadeInRise {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Keyframes riêng cho ảnh chùa (zoom nhẹ) */
+        @keyframes fadeInZoom {
+            from {
+                opacity: 0;
+                transform: scale(1.05);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1.0);
+            }
+        }
+
+        /* Kích hoạt animation khi body có class 'loaded' */
+        body.loaded {
+            opacity: 1;
+        }
+
+        body.loaded .chua-main-view {
+            animation: fadeInZoom 1.5s ease-out forwards; 
+        }
+
+        body.loaded .interactive-area {
+            animation: fadeInRise 1s cubic-bezier(0.23, 1, 0.32, 1) 0.5s forwards; /* Nổi lên mượt hơn */
+        }
+        
+        /* Hiệu ứng trễ cho từng block */
+        body.loaded .interaction-block.menu-kinh-block {
+            animation: fadeInRise 1s ease-out 1.2s forwards; 
+        }
+        
+        body.loaded .interaction-block.huong-area-block {
+            animation: fadeInRise 1s ease-out 1.4s forwards; 
+        }
+        
+        body.loaded footer {
+            animation: fadeInRise 1s ease-out 1.8s forwards; 
+        }
+        
+        /* TỐI ƯU HÓA MOBILE */
+        @media (max-width: 850px) {
+            .chua-main-view {
+                height: 50vh; 
+            }
+            .interactive-area {
+                width: 90%; 
+                margin: -50px auto 30px auto; 
+            }
+            .chua-main-view h1 .title-part-1 {
+                display: none; 
+            }
+            .chua-main-view h1 {
+                font-size: 2.5em; 
+            }
+            .interaction-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .huong-area-block { order: 1; }
+            .menu-kinh-block { order: 2; }
+            
+             /* Giảm độ trễ trên mobile để load nhanh hơn */
+             body.loaded .interactive-area {
+                animation: fadeInRise 1s cubic-bezier(0.23, 1, 0.32, 1) 0.3s forwards; 
+            }
+            
+            body.loaded .interaction-block.menu-kinh-block {
+                animation: fadeInRise 1s ease-out 0.8s forwards; 
+            }
+            
+            body.loaded .interaction-block.huong-area-block {
+                animation: fadeInRise 1s ease-out 1s forwards; 
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="chua-main-view">
+        <div id="smoke-container"></div> 
+    </div>
+
+    <div class="interactive-area">
+        
+        <div class="interaction-grid">
+            
+            <div class="interaction-block menu-kinh-block">
+                <h3>TỦ KINH & KHUNG VIÊN</h3>
+                
+                <div id="kinh-player" style="margin-bottom: 20px; text-align: center;">
+                    <p style="color: var(--color-accent); font-weight: bold; font-size: 0.9em; margin-bottom: 5px;">ÂM THANH ĐANG PHÁT:</p>
+                    <audio id="main-audio-player" controls autoplay loop style="width: 80%;">
+                        <source src="audio/adidaphat0.mp3" type="audio/mpeg"> 
+                        Trình duyệt của bạn không hỗ trợ audio.
+                    </audio>
+                </div>
+                
+                <h4 style="color: #ccc; margin-top: 10px; border-bottom: 1px solid var(--card-border); padding-bottom: 5px;">Chọn Kinh Tụng:</h4>
+                <ul class="menu-kinh-list">
+                    <li><a href="audio/adidaphat0.mp3" onclick="playKinh('adidaphat0'); return false;">A Di Đà Phật (Nghe)</a></li>
+                    <li><a href="audio/adidaphat1.mp3" onclick="playKinh('adidaphat1'); return false;">Nam Mô A Di Đà Phật (Nghe)</a></li>
+                    <li><a href="audio/chu_dai_bi.mp3" onclick="playKinh('chu_dai_bi'); return false;">Chú Đại Bi (Nghe)</a></li>
+                    <li><a href="audio/0009.dia tang bon nguyen.mp3" onclick="showText('DiaTang'); return false;">Kinh Địa Tạng Bồ Tát Bổn Nguyện (Đọc)</a></li>
+                </ul>
+            </div>
+
+            <div class="interaction-block huong-area huong-area-block">
+                <h3>THẮP HƯƠNG LÒNG THÀNH</h3>
+                <div class="lu-huong"></div>
+                <button id="thap-huong-btn">Thắp Nén Tâm Hương</button>
+                <p id="huong-status" style="color: var(--color-accent); margin-top: 20px; font-style: italic;">
+                    (Chưa thắp hương. Xin thành tâm thắp hương.)
+                </p>
+                
+                <div style="margin-top: 30px;">
+                    <p style="color: lightgray; font-size: 0.9em;">
+                        Xin Quý vị hãy tịnh tâm và chấp tay niệm "Nam Mô A Di Đà Phật" (108 lần) sau khi niệm xong xin Qúy vị tụng hồi hướng:<br>
+                        <span style="color: var(--color-accent); font-weight: bold;">"Nguyện đem công đức này, Hướng về khắp tất cả, Đệ tử và chúng sanh, Đều trọn thành Phật đạo."</span>
+                    </p>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+
+    <footer>
+        <p>Chùa Online là nơi để các Phật Tử thắp hương, Tụng Kinh và Niệm Phật khi chưa có điều kiện đến Chùa.</p>
+        <p style="color: var(--color-accent); font-size: 0.9em;">Ngoài thời gian đến Chùa Online mời quý Phật Tử nghe thêm thuyết pháp để thanh tịnh và bồi bổ tâm hồn.</p>
+        <p style="font-size: 0.7em;">&copy; 2025 Cổng Tâm Linh Vô Thường. Luôn hướng về Chánh Pháp.</p>
+    </footer>
+
+    <script>
+        // Script kích hoạt hiệu ứng
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+        
+        let isIncenseBurning = false;
+
+        function startSmokeEffect() {
+            var smokeContainer = document.getElementById('smoke-container');
+            
+            if (isIncenseBurning) return;
+            isIncenseBurning = true;
+
+            smokeContainer.innerHTML = ''; 
+            smokeContainer.style.opacity = '1';
+            
+            function createSmokeParticle() {
+                if (!isIncenseBurning) return;
+
+                let smoke = document.createElement('div');
+                smoke.className = 'smoke';
+                
+                smoke.style.left = (Math.random() * 70) + 15 + '%'; 
+                smoke.style.animationDelay = (Math.random() * 5) + 's';
+                
+                smokeContainer.appendChild(smoke);
+                
+                setTimeout(() => {
+                    if(smoke.parentElement === smokeContainer) {
+                        smokeContainer.removeChild(smoke);
+                    }
+                }, 5000); // 5000ms tương ứng với animation 5s
+            }
+
+            for (let i = 0; i < 15; i++) {
+                createSmokeParticle();
+            }
+
+            const continuousSmokeInterval = setInterval(() => {
+                if (isIncenseBurning) {
+                    createSmokeParticle();
+                } else {
+                    clearInterval(continuousSmokeInterval); 
+                }
+            }, 500); 
+        }
+        
+        document.getElementById('thap-huong-btn').addEventListener('click', function() {
+            if (!isIncenseBurning) {
+                startSmokeEffect();
+                this.disabled = true;
+                this.textContent = 'Hương đã thắp. Thành tâm khấn nguyện.';
+                document.getElementById('huong-status').textContent = '— Hương thơm vĩnh cửu, lòng thành không dứt —';
+                // alert("Lòng thành của bạn đã được gửi. Hương sẽ cháy mãi.");
+            }
+        });
+
+        // HÀM QUAN TRỌNG ĐÃ ĐƯỢC FIX
+        function playKinh(kinhName) {
+            // Lấy thẻ <audio> chính
+            const player = document.getElementById('main-audio-player');
+            const status = document.querySelector('#kinh-player p');
+            
+            // FIX: Gán đường dẫn audio trực tiếp vào thuộc tính src của thẻ <audio>
+            // Giả định cấu trúc audio/ten_kinh.mp3 là đúng
+            player.src = `audio/${kinhName}.mp3`; 
+            player.load(); // Bắt buộc phải gọi load() để tải nguồn mới
+            player.play(); 
+            
+            status.innerHTML = `ÂM THANH ĐANG PHÁT: <span style="color: white;">${kinhName.toUpperCase().replace('0', '').replace('1', '').replace('_', ' ')}</span>`;
+        }
+        
+        function showText(kinhName) {
+            const status = document.querySelector('#kinh-player p');
+            const player = document.getElementById('main-audio-player');
+            
+            player.pause(); 
+            status.innerHTML = `ÂM THANH ĐÃ DỪNG.<br> (Đang đọc Kinh: <span style="color: white;">${kinhName}</span>)`;
+            
+            alert(`Nội dung Kinh ${kinhName} sẽ được hiển thị trong một cửa sổ mới hoặc khu vực đọc.`);
+        }
+    </script>
+</body>
+</html>

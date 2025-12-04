@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gieo Quẻ Ông Thọ - Tam Đa Bối Mệnh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glow-color: rgba(255, 223, 0, 0.6); /* Màu vàng hào quang */
+            --text-color: #fff;
+            --accent-color: #ffd700;
+        }
+
+        body {
+            zoom: 80%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Merriweather', serif;
+            overflow-x: hidden;
+            background-color: #0f0f1a;
+            color: var(--text-color);
+            min-height: 100vh; /* Đảm bảo chiều cao đủ */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative; /* Cho phép các phần tử con dùng absolute */
+        }
+
+        /* --- HERO BACKGROUND (TIÊN CẢNH) --- */
+        .hero-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background-image: url('tiencanh.jpg'); /* Thay thế bằng ảnh tiên cảnh của bạn */
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.6); /* Làm tối nền để nổi bật nhân vật */
+        }
+
+        /* --- HIỆU ỨNG SƯƠNG KHÓI (FOG - CSS PURE) --- */
+        .fog-container {
+            position: fixed; /* Đổi thành fixed để luôn ở đó */
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .fog-img {
+            position: absolute;
+            height: 100vh;
+            width: 300vw;
+            z-index: 1;
+            opacity: 0.6;
+            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png') repeat-x;
+            background-size: contain;
+            animation: fog 60s linear infinite;
+        }
+
+        .fog-img-2 {
+            position: absolute;
+            height: 100vh;
+            width: 300vw;
+            z-index: 2;
+            opacity: 0.4;
+            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png') repeat-x;
+            background-size: contain;
+            animation: fog 40s linear infinite;
+            top: 30%;
+        }
+
+        @keyframes fog {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-200vw, 0, 0); }
+        }
+
+        /* --- TIÊU ĐỀ --- */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            z-index: 10;
+            animation: fadeInDown 1.5s ease-out;
+            position: absolute; /* Cố định vị trí tiêu đề */
+            top: 5vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 3.5em;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 69, 0, 0.5);
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        p.subtitle {
+            font-style: italic;
+            font-size: 1.2em;
+            color: #ddd;
+            margin-top: 10px;
+        }
+
+        /* --- CONTAINER CHÍNH CỦA TRANG (ÔNG PHÚC & CHAT BOX) --- */
+        .main-content-container {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Để căn giữa tổng thể */
+            width: 90%;
+            max-width: 1400px;
+            margin-top: 15vh; /* Đẩy xuống dưới tiêu đề */
+            z-index: 10;
+            gap: 40px;
+            flex-wrap: wrap; /* Cho phép xuống dòng trên mobile */
+        }
+
+        /* --- ÔNG PHÚC (BÊN TRÁI) --- */
+        .phuc-display {
+            flex: 1; /* Chiếm 1 phần không gian */
+            min-width: 300px; /* Chiều rộng tối thiểu */
+            max-width: 500px; /* Chiều rộng tối đa */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            animation: fadeInLeft 1.5s ease-out;
+            margin-right: -50px; /* Dịch sang trái một chút */
+            transform: translateX(-50px); /* Dịch thêm về trái */
+        }
+
+        .phuc-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 550px; /* Chiều cao ảnh */
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            transition: transform 0.5s ease;
+        }
+
+        .phuc-aura {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            width: 450px; /* To hơn chút */
+            height: 450px; /* To hơn chút */
+            background: radial-gradient(circle, var(--glow-color) 0%, rgba(255,223,0,0) 70%);
+            border-radius: 50%;
+            opacity: 1; /* Luôn sáng */
+            transition: all 0.6s ease;
+            z-index: -1;
+            mix-blend-mode: screen;
+            animation: pulseGlow 3s infinite alternate; /* Hiệu ứng nhấp nháy nhẹ */
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(1.0); opacity: 1; }
+        }
+
+        .phuc-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.7)) drop-shadow(0 0 20px var(--accent-color)); /* Bóng đổ và glow vàng */
+            transition: all 0.5s ease;
+        }
+
+        /* --- CHAT BOX (BÊN PHẢI) --- */
+        .chat-box-container {
+            flex: 2; /* Chiếm 2 phần không gian */
+            min-width: 450px; /* Chiều rộng tối thiểu cho chat box */
+            background: rgba(25, 23, 27, 0.7); /* Nền tối hơn, rõ ràng hơn */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            height: 600px; /* Chiều cao cố định */
+            position: relative;
+            animation: fadeInRight 1.5s ease-out;
+        }
+        
+        .chat-box-header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Cinzel Decorative', cursive;
+            color: var(--accent-color);
+            font-size: 1.5em;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            padding-bottom: 15px;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            margin-bottom: 15px;
+            scroll-behavior: smooth; /* Cuộn mượt */
+        }
+        
+        /* Message Styling */
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.phuc {
+            justify-content: flex-start;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+            border: 1px solid var(--accent-color);
+            box-shadow: 0 0 5px var(--accent-color);
+        }
+
+        .message.user .message-avatar {
+            order: 2; /* Đặt avatar người dùng bên phải */
+            margin-left: 10px;
+            margin-right: 0;
+        }
+
+        .message-content {
+            padding: 12px 18px;
+            border-radius: 18px;
+            max-width: 70%;
+            line-height: 1.4;
+            position: relative;
+            word-wrap: break-word; /* Đảm bảo ngắt dòng */
+        }
+
+        .message.user .message-content {
+            background-color: #3b82f6; /* Màu xanh cho người dùng */
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.phuc .message-content {
+            background-color: #2e3a4e; /* Màu tối hơn cho Ông Phúc */
+            color: #e0e0e0;
+            border-bottom-left-radius: 2px;
+        }
+
+        /* Lời chào đầu tiên từ Ông Phúc */
+        .initial-message {
+            background-color: #2e3a4e;
+            color: #e0e0e0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-style: italic;
+            border-left: 3px solid var(--accent-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+        }
+        .initial-message .message-avatar {
+            margin-right: 15px;
+        }
+
+        /* Cuộn tùy chỉnh */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #e5c100;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding-top: 10px;
+        }
+
+        .chat-input-area input[type="text"] {
+            flex-grow: 1;
+            padding: 12px 18px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            background-color: rgba(0, 0, 0, 0.4);
+            color: var(--text-color);
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chat-input-area input[type="text"]:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+        }
+
+        .chat-input-area button {
+            background: linear-gradient(45deg, #FFD700, #DAA520);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .chat-input-area button i {
+            color: #000;
+            font-size: 1.2em;
+        }
+
+        .chat-input-area button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+        }
+
+        /* --- ANIMATIONS KEYFRAMES --- */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-150px); } /* Dịch sâu hơn */
+            to { opacity: 1; transform: translateX(-50px); }
+        }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 900px) {
+            body {
+                zoom: 100%; /* Đảm bảo hiển thị đúng kích thước trên mobile */
+            }
+
+            header {
+                top: 2vh;
+                margin-bottom: 20px;
+            }
+
+            h1 { font-size: 2em; }
+            p.subtitle { font-size: 0.9em; margin-top: 5px; }
+
+            .main-content-container {
+                flex-direction: column;
+                margin-top: 15vh;
+                gap: 30px;
+                width: 95%; /* Chiếm nhiều không gian hơn */
+            }
+
+            .phuc-display {
+                width: 90%;
+                max-width: 350px; /* Giảm kích thước ông Phúc */
+                margin-right: 0;
+                transform: translateX(0); /* Đặt lại vị trí giữa */
+                order: 1; /* Ông Phúc lên trước */
+            }
+
+            .phuc-image-wrapper {
+                height: 350px; /* Giảm chiều cao ảnh */
+            }
+
+            .phuc-aura {
+                width: 300px;
+                height: 300px;
+            }
+
+            .chat-box-container {
+                width: 95%;
+                min-width: unset; /* Bỏ min-width để linh hoạt */
+                height: 450px; /* Giảm chiều cao chat box */
+                padding: 15px;
+                order: 2; /* Chat box xuống dưới */
+                margin-bottom: 20px; /* Thêm khoảng cách với footer nếu có */
+            }
+            
+            .chat-box-header {
+                font-size: 1.2em;
+                margin-bottom: 15px;
+            }
+
+            .message-content {
+                max-width: 80%; /* Tăng max-width tin nhắn trên mobile */
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+
+            .chat-input-area input[type="text"] {
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+
+            .chat-input-area button {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero-bg"></div>
+
+    <div class="fog-container">
+        <div class="fog-img"></div>
+        <div class="fog-img-2"></div>
+    </div>
+
+    <div class="main-content-container">
+        
+        <div class="phuc-display">
+            <div class="phuc-image-wrapper">
+                <div class="phuc-aura"></div>
+                <img src="tho.png" alt="Ông Phúc" class="phuc-img"> 
+            </div>
+        </div>
+
+        <div class="chat-box-container">
+            <div class="chat-box-header">
+                LỜI KHAI THỊ CỦA ÔNG THỌ
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="initial-message">
+                    <img src="tho_avatar.png" alt="Ông Phúc Avatar" class="message-avatar"> <div>
+                        Nam Mô A Di Đà Phật! Con xin chào quý đạo hữu. Hãy thành tâm bày tỏ điều lo lắng, Ông Thọ sẽ ban lời khai thị!
+                    </div>
+                </div>
+                </div>
+            
+            <div class="chat-input-area">
+                <input type="text" id="userInput" placeholder="Gõ câu thỉnh cầu của bạn và thành tâm niệm..." onkeypress="handleKeyPress(event)">
+                <button id="sendButton" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+                <button id="micButton" onclick="startSpeechRecognition()">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+    const chatMessages = document.getElementById('chatMessages');
+    const userInput = document.getElementById('userInput');
+    
+    // 1. Sửa cách khai báo endpoint (đã được sửa)
+    // ⚠️ RỦI RO BẢO MẬT: Key API được công khai.
+    const GEMINI_API_KEY = "AIzaSyCcPhWLnLQ9NkuHKLZIgSuTHl1opwflUFY"; 
+    const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;    
+    // Thêm avatar cho Ông Thọ và người dùng
+    const PHUC_AVATAR = 'tho_avatar.png'; // Avatar Ông Thọ
+    const USER_AVATAR = 'user_avatar.png'; // Avatar người dùng mặc định
+
+    // Gắn sự kiện tải trang để kích hoạt animations
+    window.addEventListener('load', function() {
+        document.body.classList.add('loaded');
+    });
+
+    // Hàm thêm tin nhắn vào chat box
+    function addMessage(sender, messageText, avatar) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', sender);
+        
+        const avatarElement = document.createElement('img');
+        avatarElement.classList.add('message-avatar');
+        avatarElement.src = avatar;
+        avatarElement.alt = sender + ' Avatar';
+
+        const contentElement = document.createElement('div');
+        contentElement.classList.add('message-content');
+        
+        // Tích hợp xử lý Markdown đơn giản (cho phép **in đậm** và xuống dòng)
+        let formattedText = messageText
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // In đậm
+            .replace(/\n/g, '<br>'); // Xuống dòng
+        
+        contentElement.innerHTML = formattedText; 
+
+        if (sender === 'user') {
+            messageElement.appendChild(contentElement);
+            messageElement.appendChild(avatarElement);
+        } else {
+            messageElement.appendChild(avatarElement);
+            messageElement.appendChild(contentElement);
+        }
+        
+        chatMessages.appendChild(messageElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Cuộn xuống cuối
+    }
+
+    // Hàm xử lý gửi tin nhắn
+    async function sendMessage() {
+        const messageText = userInput.value.trim();
+        if (messageText === '') return;
+
+        addMessage('user', messageText, USER_AVATAR);
+        userInput.value = ''; // Xóa nội dung input
+
+        // 1. Hiển thị tin nhắn chờ
+        const loadingMessage = document.createElement('div');
+        loadingMessage.classList.add('message', 'phuc');
+        loadingMessage.id = 'loadingMessage';
+
+        const loadingAvatar = document.createElement('img');
+        loadingAvatar.classList.add('message-avatar');
+        loadingAvatar.src = PHUC_AVATAR;
+        loadingAvatar.alt = 'Ông Thọ Avatar';
+
+        const loadingContent = document.createElement('div');
+        loadingContent.classList.add('message-content');
+        loadingContent.textContent = 'Ông Thọ đang suy ngẫm...';
+        
+        loadingMessage.appendChild(loadingAvatar);
+        loadingMessage.appendChild(loadingContent);
+        chatMessages.appendChild(loadingMessage);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // 2. Tắt nút gửi và input khi đang chờ phản hồi
+        document.getElementById('sendButton').disabled = true;
+        userInput.disabled = true;
+        
+        // Căn chỉnh lại vị trí Ông Thọ (chuyển animation sang trạng thái "nghiêm nghị")
+        document.querySelector('.phuc-image-wrapper').style.transform = 'translateY(-5px) scale(1.02)';
+        document.querySelector('.phuc-aura').style.opacity = '1';
+
+        try {
+            const geminiResponse = await fetchGeminiResponse(messageText);
+            chatMessages.removeChild(loadingMessage); // Xóa tin nhắn chờ
+            addMessage('phuc', geminiResponse, PHUC_AVATAR);
+        } catch (error) {
+            console.error('Lỗi khi lấy phản hồi từ Gemini:', error);
+            chatMessages.removeChild(loadingMessage); // Xóa tin nhắn chờ
+            addMessage('phuc', 'Ông Thọ đang bế quan, xin quay lại sau. Lỗi: ' + error.message, PHUC_AVATAR);
+        } finally {
+            // 3. Bật lại nút gửi và input
+            document.getElementById('sendButton').disabled = false;
+            userInput.disabled = false;
+            userInput.focus();
+            
+            // Đặt lại vị trí Ông Thọ
+            document.querySelector('.phuc-image-wrapper').style.transform = 'translateY(0) scale(1.0)';
+            document.querySelector('.phuc-aura').style.opacity = '1'; // Giữ nguyên aura
+        }
+    }
+
+// Hàm gửi yêu cầu tới Gemini API
+async function fetchGeminiResponse(userMessage) {
+    // SỬ DỤNG GEMINI_ENDPOINT đã được định nghĩa
+    const response = await fetch(GEMINI_ENDPOINT, { 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            config: {
+                // ĐÃ ĐƯỢC THIẾT LẬP ĐÚNG VAI TRÒ
+                systemInstruction: "Bạn là Ông Thọ, một vị tiên phúc đức hiền từ, đại diện cho sức khỏe và trường thọ. Bạn giải đáp vận mệnh và ban lời khuyên về sức khỏe, bình an, và cách giải trừ bệnh tật. Hãy trả lời như một ông tiên, với giọng văn cổ kính, từ tốn, đầy trí tuệ và sự nhân hậu. Luôn đưa ra những lời khai thị chân thành và tích cực, không quá ngắn gọn.",
+            },
+            contents: [{
+                parts: [
+                    { text: userMessage } 
+                ]
+            }]
+        })
+    });
+
+    if (!response.ok) {
+        // Xử lý lỗi từ API
+        const errorData = await response.json();
+        throw new Error(`API trả về lỗi ${response.status}: ${errorData.error.message}`);
+    }
+
+    const data = await response.json();
+    if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts.length > 0) {
+        return data.candidates[0].content.parts[0].text;
+    } else {
+        // Xử lý trường hợp bị lọc nội dung (ví dụ: bị chặn do chính sách an toàn)
+        if (data.candidates && data.candidates[0].finishReason === 'SAFETY') {
+             return "Lời thỉnh cầu này bị Thiên Cơ che lấp, Ông Thọ chưa thể giải đáp. Xin đạo hữu thay đổi lời thỉnh cầu.";
+        }
+        return "Ông Thọ chưa thể nhìn thấu thiên cơ lúc này. Xin đạo hữu thành tâm thử lại.";
+    }
+}
+
+    // Xử lý phím Enter
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+    
+    // Gắn hàm handleKeyPress vào input
+    userInput.addEventListener('keypress', handleKeyPress);
+
+    // Gắn hàm sendMessage vào nút gửi (nếu chưa có trong HTML)
+    document.getElementById('sendButton').addEventListener('click', sendMessage);
+
+    // Hàm nhận diện giọng nói (Giữ nguyên)
+    function startSpeechRecognition() {
+        const micButton = document.getElementById('micButton');
+        if (!('webkitSpeechRecognition' in window)) {
+            alert('Trình duyệt của bạn không hỗ trợ nhận diện giọng nói (Chỉ hỗ trợ trên Chrome và một số trình duyệt khác).');
+            return;
+        }
+
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = 'vi-VN'; 
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.start();
+        micButton.style.backgroundColor = '#FF6347'; 
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
+            micButton.style.backgroundColor = ''; 
+            sendMessage(); 
+        };
+
+        recognition.onerror = function(event) {
+            console.error('Lỗi nhận diện giọng nói:', event.error);
+            micButton.style.backgroundColor = '';
+            alert('Lỗi nhận diện giọng nói. Vui lòng thử lại.');
+        };
+
+        recognition.onend = function() {
+            micButton.style.backgroundColor = '';
+        };
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Có thể thêm code khởi tạo ở đây nếu cần
+    });
+</script>

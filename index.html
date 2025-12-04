@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cổng Tâm Linh Vô Thường - Trang Chủ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+
+        /* CSS Variables */
+        :root {
+            --color-dark-bg: #100f13; 
+            --color-medium-bg: #2f2d34;
+            --color-accent: #e5c100; /* Vàng kim loại rực rỡ */
+            --color-text-light: #f5f0e0;
+            --font-serif: 'Merriweather', serif;
+            --font-sans: 'Open Sans', sans-serif;
+        }
+
+        /* Body và Parallax Background */
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-dark-bg);
+            color: var(--color-text-light);
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+            overflow-x: hidden;
+            zoom: 80%;
+            
+            background-image: url('chua-co-kinh-background.webp');
+            background-size: cover;
+            background-attachment: fixed; 
+            background-position: center center;
+        }
+
+        /* Lớp phủ (Overlay) */
+        .overlay {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.65); 
+            z-index: -1;
+        }
+
+        /* Glass Container (Liquid Glass) */
+        .glass-container {
+            background: rgba(25, 23, 27, 0.7); 
+            backdrop-filter: blur(8px); 
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(229, 193, 0, 0.2); 
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            margin: 50px auto;
+            width: 90%;
+            max-width: 1100px;
+        }
+
+        /* Header và Tiêu đề */
+        header {
+            text-align: center;
+            padding: 50px 0 30px 0;
+        }
+
+        header h1 {
+            font-family: var(--font-serif);
+            font-size: 5em;
+            margin: 30;
+            color: var(--color-accent);
+            text-shadow: 0 0 20px rgba(229, 193, 0, 1); 
+            letter-spacing: 3px;
+        }
+
+        header p {
+            font-style: italic;
+            font-size: 1.5em;
+            color: rgba(245, 240, 224, 0.8);
+            margin-top: 15px;
+        }
+
+        /* Greeting */
+        .greeting {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid rgba(229, 193, 0, 0.3);
+        }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        /* Option Card Styling */
+        .option-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 35px;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .option-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(229, 193, 0, 1); 
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--color-accent);
+        }
+
+        .option-card h3 {
+            font-family: var(--font-serif);
+            color: var(--color-accent);
+            font-size: 2em;
+            margin-top: 0px; 
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            min-height: 40px; 
+        }
+
+        .option-card p {
+            color: rgba(245, 240, 224, 0.7);
+            margin-bottom: 30px;
+        }
+
+        /* Nút Truy Cập */
+        .btn {
+            display: inline-block;
+            background: linear-gradient(90deg, #d4af37, #ffe599); 
+            color: var(--color-dark-bg);
+            padding: 15px 35px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            border: 2px solid transparent;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #ffe599, #d4af37);
+            border-color: #fff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Phần Kệ Pháp Luân Khác */
+        .other-features {
+            text-align: center;
+            margin-top: 50px; 
+            padding-top: 30px;
+            border-top: 1px solid rgba(229, 193, 0, 0.3); 
+        }
+        
+        .other-features h2 {
+            color: var(--color-text-light); 
+            font-family: var(--font-serif);
+            margin-bottom: 15px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background-color: rgba(16, 15, 19, 0.9); 
+            color: rgba(245, 240, 224, 0.4);
+            margin-top: 0; 
+            border-top: 1px solid var(--color-accent);
+        }
+
+        /* ======================================= */
+        /* HIỆU ỨNG XUẤT HIỆN TRANG (LOAD-IN EFFECT) */
+        /* ======================================= */
+
+        /* 1. Keyframes */
+        @keyframes fadeInRise {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 2. Thiết lập trạng thái ban đầu (ẩn) */
+        header, .glass-container, footer {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: none; /* Quan trọng để animation CSS kiểm soát */
+        }
+        
+        .option-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: none;
+        }
+
+        /* 3. Kích hoạt hiệu ứng khi body có class 'loaded' */
+        body.loaded header {
+            animation: fadeInRise 1s ease-out 0.2s forwards; /* 0.2s delay */
+        }
+
+        body.loaded .glass-container {
+            animation: fadeInRise 1.2s ease-out 0.6s forwards; /* 0.6s delay, mượt hơn */
+        }
+        
+        /* Hiệu ứng trễ cho từng card để tạo cảm giác 'drops' */
+        body.loaded .options-grid .option-card:nth-child(1) {
+            animation: fadeInRise 1s ease-out 1.2s forwards; 
+        }
+        
+        body.loaded .options-grid .option-card:nth-child(2) {
+            animation: fadeInRise 1s ease-out 1.4s forwards; 
+        }
+        
+        body.loaded .options-grid .option-card:nth-child(3) {
+            animation: fadeInRise 1s ease-out 1.6s forwards; 
+        }
+
+        body.loaded footer {
+            animation: fadeInRise 1s ease-out 2s forwards; 
+        }
+
+        /* ======================================= */
+        /* TỐI ƯU HÓA MOBILE (Dưới 850px) */
+        /* ======================================= */
+        @media (max-width: 850px) {
+            
+            /* Giảm kích thước font tổng thể */
+            body {
+                line-height: 1.6;
+            }
+
+            /* Tiêu đề chính */
+            header h1 {
+                font-size: 3em; /* Giảm mạnh kích thước */
+                letter-spacing: 2px;
+            }
+            
+            header p {
+                font-size: 1.2em;
+            }
+
+            /* Container */
+            .glass-container {
+                width: 95%;
+                margin: 30px auto; /* Giảm margin trên/dưới */
+                padding: 15px; /* Giảm padding */
+            }
+
+            /* Lời chào */
+            .greeting {
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+            }
+
+            /* Grid chuyển thành 1 cột */
+            .options-grid {
+                grid-template-columns: 1fr; /* 1 cột duy nhất */
+                gap: 20px; /* Giảm khoảng cách giữa các thẻ */
+            }
+
+            /* Thẻ tùy chọn */
+            .option-card {
+                padding: 25px;
+                transform: none !important; /* Xóa hiệu ứng transform khi hover trên mobile */
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); /* Giữ lại bóng nhẹ */
+            }
+            
+            .option-card:hover {
+                /* Bỏ hẳn hiệu ứng scale trên mobile để tránh lỗi overflow */
+                transform: none; 
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+                border: 1px solid rgba(255, 255, 255, 0.1); /* Giữ nguyên viền mờ */
+            }
+
+            .option-card h3 {
+                font-size: 1.5em;
+                margin-bottom: 10px;
+            }
+
+            .option-card p {
+                font-size: 0.9em;
+                margin-bottom: 20px;
+            }
+            
+            /* Nút Truy Cập */
+            .btn {
+                padding: 10px 25px; /* Giảm padding nút */
+                font-size: 1em;
+            }
+            
+            /* Footer */
+            footer {
+                padding: 20px 10px;
+                font-size: 0.9em;
+            }
+            
+             /* Cập nhật lại hiệu ứng xuất hiện trên Mobile/Tablet để đảm bảo tốc độ và trải nghiệm mượt mà */
+            body.loaded .options-grid .option-card:nth-child(1),
+            body.loaded .options-grid .option-card:nth-child(2),
+            body.loaded .options-grid .option-card:nth-child(3) {
+                 animation: fadeInRise 1s ease-out 1.2s forwards; /* Giảm độ trễ cho cả 3 card */
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="overlay"></div>
+
+    <header>
+        <h1>CỔNG TÂM LINH VÔ THƯỜNG</h1>
+        <p>— Ánh Sáng Từ Ngàn Đời Dẫn Lối —</p>
+    </header>
+
+    <div class="glass-container">
+        
+        <section class="greeting">
+            <h2 style="color: var(--color-text-light); font-family: var(--font-serif); font-size: 1.8em;">LỜI KHAI THỊ</h2>
+            <p style="color: rgba(245, 240, 224, 0.9); max-width: 800px; margin: 0 auto;">
+                Tâm không cần đến. Chốn thiêng này là nơi Vạn Vật giao hòa, giúp hành giả kết nối năng lượng thanh tịnh với Đức Phật, Bồ Tát, và Tổ tiên. Hãy lựa chọn con đường tâm linh của mình.
+            </p>
+        </section>
+
+        <section>
+            <h2 style="text-align: center; color: var(--color-accent); margin-bottom: 50px; font-family: var(--font-serif); letter-spacing: 2px;">BA CÁNH CỬA GIÁC NGỘ</h2>
+            
+            <div class="options-grid">
+                
+                <div class="option-card">
+                    <h3>THIỀN ĐƯỜNG MÂY KHÓI</h3>
+                    <p>Hồi hướng công đức, thắp nén tâm hương vô hình, lắng nghe tiếng tụng kinh từ chốn hư vô, và cầu nguyện bình an cho gia quyến.</p>
+                    <a href="viengchua/index.html" class="btn">Viếng Chùa & Cầu An</a>
+                </div>
+
+                <div class="option-card">
+                    <h3>GỬI TÂM DƯỠNG THIỆN</h3>
+                    <p>Phát tâm bồ đề, cúng dường tài vật để ủng hộ các hoạt động từ thiện, Phật sự, và duy trì Ngôi Bảo Điện Online.</p>
+                    <a href="cung-duong.html" class="btn">Gửi Lòng Thành Kính</a>
+                </div>
+
+                <div class="option-card">
+                    <h3>HỘP ĐỒNG KHAI THỊ</h3>
+                    <p>Giải mã những bí ẩn của cuộc đời thông qua quẻ Bồ Đề và lời khuyên chân thật từ các bộ Kinh Điển chọn lọc.</p>
+                    <a href="boitoan/index.html" class="btn">Khám Phá Thiên Cơ</a>
+                </div>
+            </div>
+        </section>
+        
+        <section class="other-features"> 
+            <h2>--- Kệ Pháp Luân Khác ---</h2>
+            <p style="color: rgba(245, 240, 224, 0.6);">
+                * Đại Tạng Kinh Sâu Rộng | *Lịch Pháp Hội Vô Thường | *Tư Vấn Giảng Sư
+            </p>
+        </section>
+    </div>
+
+    <footer>
+        <p style="font-size: 0.7em;">&copy; 2025 Cổng Tâm Linh Vô Thường. Luôn hướng về Chánh Pháp.</p>
+    </footer>
+
+    <script>
+        // Thêm class 'loaded' vào thẻ body khi toàn bộ nội dung (bao gồm cả ảnh nền) đã tải xong
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+    </script>
+
+</body>
+</html>
