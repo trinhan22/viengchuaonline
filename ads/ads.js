@@ -24,7 +24,7 @@ if (adOverlay && skipButton && goToWebsiteButton && adIframe) {
     adIframe.src = selectedAdUrl;
     
     const countdownSpan = skipButton.querySelector('span');
-    let timeLeft = 5; 
+    let timeLeft = 3; 
     
     if (countdownSpan) {
         countdownSpan.textContent = timeLeft; 
