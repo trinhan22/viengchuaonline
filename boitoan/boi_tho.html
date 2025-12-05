@@ -486,7 +486,7 @@ const chatMessages = document.getElementById('chatMessages');
     
     // 1. CẤU HÌNH API
     // !!! BẠN CẦN THAY THẾ AIzaSyAJekYWEftYVRX4qTPxevQDzYP-GDC3GSc BẰNG API KEY THỰC CỦA BẠN !!!
-    const GEMINI_API_KEY = "AIzaSyAJekYWEftYVRX4qTPxevQDzYP-GDC3GSc"; 
+    const GEMINI_API_KEY = "AIzaSyAkXpitXnOx7ccgG7vlIX714UTKkWxWZ1A"; 
     
     // Endpoint sử dụng mô hình gemini-2.5-flash
     const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`; 
@@ -668,7 +668,7 @@ const chatMessages = document.getElementById('chatMessages');
     function startSpeechRecognition() {
         const micButton = document.getElementById('micButton');
         if (!('webkitSpeechRecognition' in window)) {
-            alert('Trình duyệt của bạn không hỗ trợ nhận diện giọng nói.');
+            alert('Ông Thọ không thể nghe được, vui lòng gõ chữ.');
             return;
         }
 
