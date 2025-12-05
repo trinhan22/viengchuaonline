@@ -6,6 +6,8 @@
     <title>Viếng chùa Online - Tinh Lọc Tâm Hồn</title>
     <link href="../logo.png" rel="icon" type="logo.png"/>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../ads/ads.css">
+    
     <style>
         /* CSS Variables */
         :root {
@@ -342,11 +344,25 @@
         
     </div>
 
+    <div id="ad-overlay">
+        <div id="ad-container">
+            <button id="go-to-website-button">Go to website</button>
+            <button id="skip-button" disabled>Skip ad (<span>5</span>)</button>
+            
+            <iframe 
+                id="ad-iframe" 
+                title="Nội dung quảng cáo nhúng"
+            ></iframe>
+        </div>
+    </div>
+
     <footer>
         <p>Chùa Online là nơi để các Phật Tử thắp hương, Tụng Kinh và Niệm Phật khi chưa có điều kiện đến Chùa.</p>
         <p style="color: var(--color-accent); font-size: 0.9em;">Ngoài thời gian đến Chùa Online mời quý Phật Tử nghe thêm thuyết pháp để thanh tịnh và bồi bổ tâm hồn.</p>
         <p style="font-size: 0.7em;">&copy; 2025 Cổng Tâm Linh Vô Thường. Luôn hướng về Chánh Pháp.</p>
     </footer>
+
+    <script src="../ads/ads.js"></script>
 
     <script>
         // Script kích hoạt hiệu ứng
